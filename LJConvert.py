@@ -6,16 +6,21 @@ Vals = {}
 for i,arg in enumerate(sys.argv):
   if arg == '-rmin':
     Vals['rmin'] = float(sys.argv[i+1])
+  if arg == '-rmin/2': ### AMBER
+    Vals['rmin/2'] = float(sys.argv[i+1])
   if arg == '-sigma':
     Vals['sigma'] = float(sys.argv[i+1])
-  if arg == '-epsilon':
+  if arg == '-epsilon': ### AMBER
     Vals['epsilon'] = float(sys.argv[i+1])
   if arg == '-A':
     Vals['A'] = float(sys.argv[i+1])
   if arg in ['-B','-C']:
     Vals['B'] = float(sys.argv[i+1])
 
-
+if 'rmin' in Vals and not 'rmin/2' in Vals:
+  Vals['rmin/2'] = Vals['rmin']/2.0
+if 'rmin/2' in Vals and not 'rmin' in Vals:
+  Vals['rmin'] = Vals['rmin/2']*2.0
 if 'rmin' in Vals and not 'sigma' in Vals:
   Vals['sigma'] = Vals['rmin']/(2.0**(1.0/6.0))
 if 'sigma' in Vals and not 'rmin' in Vals:
@@ -27,6 +32,7 @@ if 'A' in Vals and 'B' in Vals and (not 'rmin' in Vals or not 'sigma' in Vals or
   Vals['sigma'] = (Vals['A']/Vals['B'])**(1.0/6.0)
   Vals['rmin'] = Vals['sigma']*(2.0**(1.0/6.0))
   Vals['epsilon'] = (Vals['B']**2.0)/(4.0*Vals['A'])
+  Vals['rmin/2'] = Vals['rmin']/2.0
 
-for key in "rmin sigma epsilon A B".split():
+for key in "rmin/2 rmin sigma epsilon A B".split():
   print "%8s= %15.7f" % (key,Vals[key])
